@@ -2,9 +2,9 @@
 	// No Svelte 5, usamos $state para variáveis que mudam na tela
 	let tasks = $state([]);
 
-	async function loadTasks() {
+		async function loadTasks() {
 		try {
-			const response = await fetch('http://localhost:8080/api/tasks');
+			const response = await fetch('https://crispy-broccoli-gpg6rxxrvxwcw74-8080.app.github.dev/api/tasks');
 			tasks = await response.json();
 		} catch (err) {
 			console.error("Erro ao buscar tarefas. O backend Go está rodando?", err);
