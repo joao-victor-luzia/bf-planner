@@ -5,13 +5,17 @@ import (
 	"fmt"
 	"net/http"
 	"sync"
+	"time"
 )
 
 // Task define nossa estrutura
 type Task struct {
-	ID    int    `json:"id"`
-	Title string `json:"title"`
-	Done  bool   `json:"done"`
+	ID			int      	`json:"seq_id_task"`
+	StrTitle	string   	`json:"str_title"`
+	BooDone		bool     	`json:"boo_done"`
+	TimCreated	time.Time	`json:"ts_created"`
+	DatStart	time.Time	`json:"dat_start"`
+	DatEnd		time.Time	`json:"dat_end"`
 }
 
 // --- BANCO DE DADOS EM MEMÓRIA ---
