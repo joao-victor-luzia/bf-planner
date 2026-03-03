@@ -1,8 +1,9 @@
 <script lang="ts">
-	// No Svelte 5, usamos $state para variáveis que mudam na tela
 	let tasks = $state([]);
+	let taskTitle = $state("");
+  	let message = $state("");
 
-		async function loadTasks() {
+	async function loadTasks() {
 		try {
 			const response = await fetch('https://crispy-broccoli-gpg6rxxrvxwcw74-8080.app.github.dev/api/tasks');
 			tasks = await response.json();
@@ -10,6 +11,30 @@
 			console.error("Erro ao buscar tarefas. O backend Go está rodando?", err);
 		}
 	}
+
+	async function sendTask() {
+    	const data = { title: taskTitle };
+
+		try {
+			const response = await fetch("https://crispy-broccoli-gpg6rxxrvxwcw74-8080.app.github.dev/api/tasks", {
+				method: "POST",
+				headers: {
+				"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data), 
+			});
+
+			if (response.ok) {
+				message = "Tarefa enviada com sucesso!";
+				taskTitle = ""; // Limpa o campo
+			} else {
+				message = "Erro ao enviar: " + response.statusText;
+			}
+		} catch (error) {
+			message = "Erro de conexão: " + error.message;
+		}
+		loadTasks();
+    }
 </script>
 
 <main>
@@ -28,6 +53,12 @@
 			</li>
 		{/each}
 	</ul>
+	<input type="text" id="oi" bind:value={taskTitle}>
+	<br>
+	<button onclick={sendTask}>
+		ENVIAR Minhas Tarefas
+	</button>
+	<p>{message}</p>
 </main>
 
 <style>
