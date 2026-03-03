@@ -13,7 +13,7 @@
 	}
 
 	async function sendTask() {
-    	const data = { title: taskTitle };
+    	const data = { StrTitle: taskTitle };
 
 		try {
 			const response = await fetch("https://crispy-broccoli-gpg6rxxrvxwcw74-8080.app.github.dev/api/tasks", {
