@@ -20,8 +20,8 @@
 			onclick={() => onClickItem(item)}
 			class="task {item.className} unbutton"
 			style="grid-column: {item.startCol} / span {item.len};      
-      grid-row: {item.startRow};  
-      align-self: {item.isBottom ? 'end' : 'center'};"
+			grid-row: {item.startRow};  
+			align-self: {item.isBottom ? 'end' : 'center'};"
 		>
 			{item.title}
 			{#if item.detailHeader}
@@ -48,11 +48,9 @@
 	}
 	.calendar {
 		display: grid;
-		width: 100%;
 		grid-template-columns: repeat(7, minmax(120px, 1fr));
 		grid-template-rows: 50px;
 		grid-auto-rows: 120px;
-		overflow: auto;
 	}
 	.day {
 		display: flex;
@@ -136,6 +134,9 @@
 		align-self: center;
 		z-index: 2;
 		border-radius: 15px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.task--warning {
 		border-left-color: #fdb44d;

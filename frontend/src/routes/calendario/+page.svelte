@@ -30,17 +30,13 @@
 		return Math.floor(Math.random() * max) + 1;
 	}
 
-	//	The Calendar Component just displays stuff in a row & column. It has no knowledge of dates.
-	//	The items[] below are placed (by you) in a specified row & column of the calendar.
-	//	You need to call findRowCol() to calc the row/col based on each items start date. Each date box has a Date() property.
-	//	And, if an item overlaps rows, then you need to add a 2nd item on the subsequent row.
 	var items: CalendarTask[] = [];
-	var itemsproc: CalendarTask[] = [];
 
 	function initMonthItems() {
+		var itemsproc: CalendarTask[] = [];
 		let y = year;
 		let m = month;
-		let d1 = new Date(y, m, randInt(7) + 7);
+		let d1 = new Date(y, m, 1);
 		items = [
 			{
 				title: '11:00 Task Early in month',
@@ -48,12 +44,17 @@
 				date: new Date(y, m, randInt(6)),
 				len: randInt(4) + 1
 			},
-			{ title: '7:30 Wk 2 tasks', className: 'task--warning', date: d1, len: randInt(4) + 2 },
+			{
+				title: '7:30 Wk 2 tasks',
+				className: 'task--warning',
+				date: d1,
+				len: randInt(4) + 2
+			},
 			{
 				title: 'Overlapping Stuff (isBottom:true)',
 				date: d1,
 				className: 'task--info',
-				len: 4,
+				len: 20,
 				isBottom: true
 			},
 			{
@@ -73,7 +74,6 @@
 			}
 		];
 
-		//This is where you calc the row/col to put each dated itemm
 		for (let i of items) {
 			let rc = findRowCol(i.date);
 			if (rc == null) {
@@ -84,13 +84,7 @@
 			} else {
 				i.startCol = rc.col;
 				i.startRow = rc.row;
-				if (i.startCol + i.len > 8 && i.startRow < 6) {
-					let copyi = structuredClone(i);
-					copyi.startCol = 1;
-					copyi.startRow!++;
-					copyi.len = i.startCol + i.len - 8;
-					itemsproc.push(copyi);
-				}
+				itemsproc.push(...splitItem(i));
 			}
 		}
 		items = [...items, ...itemsproc];
@@ -98,7 +92,6 @@
 
 	$: (month, year, initContent());
 
-	// choose what date/day gets displayed in each date box.
 	function initContent() {
 		headers = dayNames;
 		initMonth();
@@ -173,6 +166,18 @@
 			month--;
 		}
 	}
+	function splitItem(i: CalendarTask) {
+		let itemsproc: CalendarTask[] = [];
+		let copyi = structuredClone(i);
+		itemsproc.push(i);
+		while (copyi.startCol! + copyi.len > 8 && copyi.startRow! < 6) {
+			copyi.len = copyi.startCol! + copyi.len - 8;
+			copyi.startRow!++;
+			copyi.startCol = 1;
+			itemsproc.push(structuredClone(copyi));
+		}
+		return itemsproc;
+	}
 </script>
 
 <div class="calendar-container">
@@ -200,13 +205,12 @@
 
 <style>
 	.calendar-container {
-		width: 90%;
+		width: 75vw;
 		margin: auto;
 		overflow: hidden;
 		box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
 		border-radius: 10px;
 		background: #fff;
-		max-width: 1200px;
 	}
 	.calendar-header {
 		text-align: center;
