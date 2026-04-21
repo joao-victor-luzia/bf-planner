@@ -26,7 +26,7 @@
 
 			if (response.ok) {
 				message = 'Tarefa enviada com sucesso!';
-				taskTitle = ''; // Limpa o campo
+				taskTitle = '';
 			} else {
 				message = 'Erro ao enviar: ' + response.statusText;
 			}
