@@ -18,30 +18,24 @@
 		'December'
 	];
 
-	let headers: string[] = [];
+	let headers: string[] = dayNames;
 	let now = new Date();
-	let year = now.getFullYear(); //	this is the month & year displayed
-	let month = now.getMonth();
-	let eventText = 'Click an item or date';
+	let year = $state(now.getFullYear());
+	let month = $state(now.getMonth());
+	let eventText = $state('Click an item or date');
 
-	var days: CalendarDay[] = []; //	The days to display in each box
+	var days: CalendarDay[] = $derived(initMonth(year, month)); //	The days to display in each box
 
 	function randInt(max: number): number {
 		return Math.floor(Math.random() * max) + 1;
 	}
 
-	//	The Calendar Component just displays stuff in a row & column. It has no knowledge of dates.
-	//	The items[] below are placed (by you) in a specified row & column of the calendar.
-	//	You need to call findRowCol() to calc the row/col based on each items start date. Each date box has a Date() property.
-	//	And, if an item overlaps rows, then you need to add a 2nd item on the subsequent row.
-	var items: CalendarTask[] = [];
-	var itemsproc: CalendarTask[] = [];
+	var items: CalendarTask[] = $derived(initMonthItems(year, month));
 
-	function initMonthItems() {
-		let y = year;
-		let m = month;
+	function initMonthItems(y: number, m: number) {
 		let d1 = new Date(y, m, randInt(7) + 7);
-		items = [
+		let itemsproc: CalendarTask[] = [];
+		let items: CalendarTask[] = [
 			{
 				title: '11:00 Task Early in month',
 				className: 'task--primary',
@@ -93,20 +87,11 @@
 				}
 			}
 		}
-		items = [...items, ...itemsproc];
+		return [...items, ...itemsproc];
 	}
 
-	$: (month, year, initContent());
-
-	// choose what date/day gets displayed in each date box.
-	function initContent() {
-		headers = dayNames;
-		initMonth();
-		initMonthItems();
-	}
-
-	function initMonth() {
-		days = [];
+	function initMonth(year: number, month: number) {
+		let days = [];
 		let monthAbbrev = monthNames[month].slice(0, 3);
 		let nextMonthAbbrev = monthNames[(month + 1) % 12].slice(0, 3);
 		//	find the last Monday of the previous month
@@ -134,6 +119,7 @@
 			if (i == 0) days.push({ name: nextMonthAbbrev + ' ' + (i + 1), enabled: false, date: d });
 			else days.push({ name: '' + (i + 1), enabled: false, date: d });
 		}
+		return days;
 	}
 
 	function findRowCol(dt: Date) {
@@ -175,33 +161,39 @@
 	}
 </script>
 
-<div class="calendar-container">
-	<div class="calendar-header">
-		<h1>
-			<button on:click={() => year--}>&Lt;</button>
-			<button on:click={() => prev()}>&lt;</button>
-			{monthNames[month]}
-			{year}
-			<button on:click={() => next()}>&gt;</button>
-			<button on:click={() => year++}>&Gt;</button>
-		</h1>
-		{eventText}
-	</div>
+<main>
+	<div class="calendar-container">
+		<div class="calendar-header">
+			<h1>
+				<button onclick={() => year--}>&Lt;</button>
+				<button onclick={() => prev()}>&lt;</button>
+				{monthNames[month]}
+				{year}
+				<button onclick={() => next()}>&gt;</button>
+				<button onclick={() => year++}>&Gt;</button>
+			</h1>
+			{eventText}
+		</div>
 
-	<Calendar
-		{headers}
-		{days}
-		{items}
-		onClickDay={(e: CalendarDay) => dayClick(e)}
-		onClickItem={(e: CalendarTask) => itemClick(e)}
-		onClickHeader={(e: string) => headerClick(e)}
-	/>
-</div>
+		<Calendar
+			{headers}
+			{days}
+			{items}
+			onClickDay={(e: CalendarDay) => dayClick(e)}
+			onClickItem={(e: CalendarTask) => itemClick(e)}
+			onClickHeader={(e: string) => headerClick(e)}
+		/>
+	</div>
+</main>
 
 <style>
+	main {
+		display: flex;
+		flex-direction: row;
+		width: 100vw;
+	}
 	.calendar-container {
-		width: 90%;
-		margin: auto;
+		width: 70vw;
 		overflow: hidden;
 		box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
 		border-radius: 10px;

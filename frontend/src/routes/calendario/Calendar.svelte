@@ -3,11 +3,11 @@
 </script>
 
 <div class="calendar">
-	{#each headers as header}
+	{#each headers as header (header)}
 		<button class="day-name unbutton" onclick={() => onClickHeader(header)}>{header}</button>
 	{/each}
 
-	{#each days as day}
+	{#each days as day (day)}
 		{#if day.enabled}
 			<button class="day unbutton" onclick={() => onClickDay(day)}>{day.name}</button>
 		{:else}
@@ -15,12 +15,12 @@
 		{/if}
 	{/each}
 
-	{#each items as item}
+	{#each items as item (item)}
 		<button
 			onclick={() => onClickItem(item)}
 			class="task {item.className} unbutton"
-			style="grid-column: {item.startCol} / span {item.len};      
-      grid-row: {item.startRow};  
+			style="grid-column: {item.startCol} / span {item.len};
+      grid-row: {item.startRow};
       align-self: {item.isBottom ? 'end' : 'center'};"
 		>
 			{item.title}
@@ -136,6 +136,9 @@
 		align-self: center;
 		z-index: 2;
 		border-radius: 15px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	.task--warning {
 		border-left-color: #fdb44d;
